@@ -1,167 +1,164 @@
-//! AsmJit error type (uint32_t).
-typedef uint32_t Error;
+/// AsmJit error type 
+type AsmJitError = Option<Error>;
 
-//! AsmJit error codes.
-enum ErrorCode : uint32_t {
-  //! No error (success).
-  kErrorOk = 0,
-
+//! AsmJit errors
+enum Error {
   //! Out of memory.
-  kErrorOutOfMemory,
-
+  OutOfMemory,
   //! Invalid argument.
-  kErrorInvalidArgument,
+  InvalidArgument,
 
   //! Invalid state.
   //!
   //! If this error is returned it means that either you are doing something
   //! wrong or AsmJit caught itself by doing something wrong. This error should
   //! never be ignored.
-  kErrorInvalidState,
+  InvalidState,
 
   //! Invalid or incompatible architecture.
-  kErrorInvalidArch,
+  InvalidArch,
 
   //! The object is not initialized.
-  kErrorNotInitialized,
+  NotInitialized,
   //! The object is already initialized.
-  kErrorAlreadyInitialized,
+  AlreadyInitialized,
 
   //! Built-in feature was disabled at compile time and it's not available.
-  kErrorFeatureNotEnabled,
+  FeatureNotEnabled,
 
   //! Too many handles (Windows) or file descriptors (Unix/Posix).
-  kErrorTooManyHandles,
+  TooManyHandles,
   //! Code generated is larger than allowed.
-  kErrorTooLarge,
+  TooLarge,
 
   //! No code generated.
   //!
   //! Returned by runtime if the `CodeHolder` contains no code.
-  kErrorNoCodeGenerated,
+  NoCodeGenerated,
 
   //! Invalid directive.
-  kErrorInvalidDirective,
+  InvalidDirective,
   //! Attempt to use uninitialized label.
-  kErrorInvalidLabel,
+  InvalidLabel,
   //! Label index overflow - a single `Assembler` instance can hold almost
   //! 2^32 (4 billion) labels. If there is an attempt to create more labels
   //! then this error is returned.
-  kErrorTooManyLabels,
+  TooManyLabels,
   //! Label is already bound.
-  kErrorLabelAlreadyBound,
+  LabelAlreadyBound,
   //! Label is already defined (named labels).
-  kErrorLabelAlreadyDefined,
+  LabelAlreadyDefined,
   //! Label name is too long.
-  kErrorLabelNameTooLong,
+  LabelNameTooLong,
   //! Label must always be local if it's anonymous (without a name).
-  kErrorInvalidLabelName,
+  InvalidLabelName,
   //! Parent id passed to `CodeHolder::newNamedLabelId()` was invalid.
-  kErrorInvalidParentLabel,
+  InvalidParentLabel,
   //! Parent id specified for a non-local (global) label.
-  kErrorNonLocalLabelCantHaveParent,
+  NonLocalLabelCantHaveParent,
 
   //! Invalid section.
-  kErrorInvalidSection,
+  InvalidSection,
   //! Too many sections (section index overflow).
-  kErrorTooManySections,
+  TooManySections,
   //! Invalid section name (most probably too long).
-  kErrorInvalidSectionName,
+  InvalidSectionName,
 
   //! Relocation index overflow (too many relocations).
-  kErrorTooManyRelocations,
+  TooManyRelocations,
   //! Invalid relocation entry.
-  kErrorInvalidRelocEntry,
+  InvalidRelocEntry,
   //! Reloc entry contains address that is out of range (unencodable).
-  kErrorRelocOffsetOutOfRange,
+  RelocOffsetOutOfRange,
 
   //! Invalid assignment to a register, function argument, or function return value.
-  kErrorInvalidAssignment,
+  InvalidAssignment,
   //! Invalid instruction.
-  kErrorInvalidInstruction,
+  InvalidInstruction,
   //! Invalid register type.
-  kErrorInvalidRegType,
+  InvalidRegType,
   //! Invalid register group.
-  kErrorInvalidRegGroup,
+  InvalidRegGroup,
   //! Invalid register's physical id.
-  kErrorInvalidPhysId,
+  InvalidPhysId,
   //! Invalid register's virtual id.
-  kErrorInvalidVirtId,
+  InvalidVirtId,
   //! Invalid prefix combination.
-  kErrorInvalidPrefixCombination,
+  InvalidPrefixCombination,
   //! Invalid LOCK prefix.
-  kErrorInvalidLockPrefix,
+  InvalidLockPrefix,
   //! Invalid XACQUIRE prefix.
-  kErrorInvalidXAcquirePrefix,
+  InvalidXAcquirePrefix,
   //! Invalid XRELEASE prefix.
-  kErrorInvalidXReleasePrefix,
+  InvalidXReleasePrefix,
   //! Invalid REP prefix.
-  kErrorInvalidRepPrefix,
+  InvalidRepPrefix,
   //! Invalid REX prefix.
-  kErrorInvalidRexPrefix,
+  InvalidRexPrefix,
   //! Invalid {...} register.
-  kErrorInvalidExtraReg,
+  InvalidExtraReg,
   //! Invalid {k} use (not supported by the instruction).
-  kErrorInvalidKMaskUse,
+  InvalidKMaskUse,
   //! Invalid {k}{z} use (not supported by the instruction).
-  kErrorInvalidKZeroUse,
+  InvalidKZeroUse,
   //! Invalid broadcast - Currently only related to invalid use of AVX-512 {1tox}.
-  kErrorInvalidBroadcast,
+  InvalidBroadcast,
   //! Invalid 'embedded-rounding' {er} or 'suppress-all-exceptions' {sae} (AVX-512).
-  kErrorInvalidEROrSAE,
+  InvalidEROrSAE,
   //! Invalid address used (not encodable).
-  kErrorInvalidAddress,
+  InvalidAddress,
   //! Invalid index register used in memory address (not encodable).
-  kErrorInvalidAddressIndex,
+  InvalidAddressIndex,
   //! Invalid address scale (not encodable).
-  kErrorInvalidAddressScale,
+  InvalidAddressScale,
   //! Invalid use of 64-bit address.
-  kErrorInvalidAddress64Bit,
+  InvalidAddress64Bit,
   //! Invalid use of 64-bit address that require 32-bit zero-extension (X64).
-  kErrorInvalidAddress64BitZeroExtension,
+  InvalidAddress64BitZeroExtension,
   //! Invalid displacement (not encodable).
-  kErrorInvalidDisplacement,
+  InvalidDisplacement,
   //! Invalid segment (X86).
-  kErrorInvalidSegment,
+  InvalidSegment,
 
   //! Invalid immediate (out of bounds on X86 and invalid pattern on ARM).
-  kErrorInvalidImmediate,
+  InvalidImmediate,
 
   //! Invalid operand size.
-  kErrorInvalidOperandSize,
+  InvalidOperandSize,
   //! Ambiguous operand size (memory has zero size while it's required to determine the operation type.
-  kErrorAmbiguousOperandSize,
+  AmbiguousOperandSize,
   //! Mismatching operand size (size of multiple operands doesn't match the operation size).
-  kErrorOperandSizeMismatch,
+  OperandSizeMismatch,
 
   //! Invalid option.
-  kErrorInvalidOption,
+  InvalidOption,
   //! Option already defined.
-  kErrorOptionAlreadyDefined,
+  OptionAlreadyDefined,
 
   //! Invalid TypeId.
-  kErrorInvalidTypeId,
+  InvalidTypeId,
   //! Invalid use of a 8-bit GPB-HIGH register.
-  kErrorInvalidUseOfGpbHi,
+  InvalidUseOfGpbHi,
   //! Invalid use of a 64-bit GPQ register in 32-bit mode.
-  kErrorInvalidUseOfGpq,
+  InvalidUseOfGpq,
   //! Invalid use of an 80-bit float (Type::kIdF80).
-  kErrorInvalidUseOfF80,
+  InvalidUseOfF80,
   //! Some registers in the instruction muse be consecutive (some ARM and AVX512 neural-net instructions).
-  kErrorNotConsecutiveRegs,
+  NotConsecutiveRegs,
 
   //! AsmJit requires a physical register, but no one is available.
-  kErrorNoMorePhysRegs,
+  NoMorePhysRegs,
   //! A variable has been assigned more than once to a function argument (BaseCompiler).
-  kErrorOverlappedRegs,
+  OverlappedRegs,
   //! Invalid register to hold stack arguments offset.
-  kErrorOverlappingStackRegWithRegArg,
+  OverlappingStackRegWithRegArg,
 
   //! Unbound label cannot be evaluated by expression.
-  kErrorExpressionLabelNotBound,
+  ExpressionLabelNotBound,
   //! Arithmetic overflow during expression evaluation.
-  kErrorExpressionOverflow,
-
-  //! Count of AsmJit error codes.
-  kErrorCount
+  ExpressionOverflow,
 };
+
+// CPP: changes 
+// 1) sucess error code removed, err type replased by Option<Error>
+// 2) remove enum code number 
