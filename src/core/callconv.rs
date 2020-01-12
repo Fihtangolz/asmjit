@@ -1,4 +1,4 @@
-enum CallConvVariants {
+pub enum CallConvVariants {
     /// `__cdecl` calling convention (used by C runtime and libraries).
     X86CDecl,
     /// `__stdcall` calling convention (used mostly by WinAPI).
@@ -33,7 +33,6 @@ enum CallConvVariants {
     Arm32SoftFP,
     /// Modern calling convention, uses VFP registers to pass floating point arguments.
     Arm32HardFP,
-
 }
 
 impl CallConv {

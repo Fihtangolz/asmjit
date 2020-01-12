@@ -1,4 +1,5 @@
-mod callconv;
+use super::callconv::CallConvVariants;
+use super::r#type;
 
 /// Function detail - CallConv and expanded FuncSignature.
 ///
@@ -6,7 +7,7 @@ mod callconv;
 /// It contains calling convention and expanded function signature so all
 /// arguments have assigned either register type & id or stack address.
 pub struct FuncDetail {
-    call_conv: callconv::CallConv,
+    call_conv: CallConvVariants,
     arg_count: u8,
     ret_count: u8,
 }
@@ -55,15 +56,15 @@ struct FuncFrame {
 /// contain platform specific or calling convention specific information.
 struct FuncSignature {
     /// Calling convention id.
-    call_сonv: CallConvVariants,
+    call_conv: CallConvVariants,
     /// Count of arguments.
     arg_count: u8,
     /// Index of a first VA or `kNoVarArgs`.
     va_index: u8,
     /// Return value TypeId.
-    ret: u8,
+    ret: r#type::Type,
     /// Function arguments TypeIds.
-    const uint8_t* _args;
+    args: u8,
 
     enum : uint8_t {
         //! Doesn't have variable number of arguments (`...`).
@@ -73,15 +74,15 @@ struct FuncSignature {
 
 impl FuncSignature {
     /// Initializes the function signature.
-    pub fn init(&mut self, call_сonv: CallConvVariants, va_index: u8, uint32_t ret, const uint8_t* args, arg_count: u8) {
-        self.call_conv = call_сonv;
+    pub fn init(&mut self, call_conv: CallConvVariants, va_index: u8, ret: r#type::Type, args: u8, arg_count: u8) {
+        self.call_conv = call_conv;
         self.arg_count = arg_count;
         self.va_index = va_index;
         self.ret = ret;
         self.args = args;
     }
   
-    pub fn reset() {
+    pub fn reset(&mut self) {
         unimplemented!();
     }
 
