@@ -1,4 +1,5 @@
 use std::mem;
+use super::operand::RegInfo;
 
 pub enum ArchVariants {
     /// Unknown architecture
@@ -161,8 +162,12 @@ pub struct ArchRegs {
     reg_info: [RegInfo; 32],
     /// Count (maximum) of  registers per `BaseReg::RegType`.
     reg_count: [u8; 32],
-    /// Converts RegType to TypeId, see `Type::Id`.
-    uint8_t regTypeToTypeId[BaseReg::kTypeMax + 1];
+    // Converts RegType to TypeId, see `Type::Id`.
+    // uint8_t regTypeToTypeId[BaseReg::kTypeMax + 1];
+}
+
+pub fn type_id_to_reg_info() {
+    
 }
 
 // CPP: changes 
