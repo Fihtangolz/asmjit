@@ -1,3 +1,5 @@
+use std::mem;
+
 pub enum ArchVariants {
     /// Unknown architecture
     UNKNOWN,
@@ -14,11 +16,12 @@ pub enum ArchVariants {
 }
 
 pub enum ArchSubType {
-    X86_AVX,
-    X86_AVX2,
-    X86_AVX512,
-    86_AVX512VL,
-    A32_THUMB,
+    NONE,
+    X86Avx,
+    X86Avx2,
+    X86Avx512,
+    X86Avx512vl,
+    A32Thumb,
 }
 
 impl ArchVariants {
@@ -38,31 +41,73 @@ impl ArchVariants {
     }
 }
 
-type GpSize = u32;
-
-//TODO: wrap on C's enum 
 pub struct ArchInfo {
     /// Architecture id.
     arch: ArchVariants,
     /// Architecture sub-id.
     sub_arch: ArchSubType,
     /// Default size of a general purpose register.
-    gp_size: GpSize
+    gp_size: u32,
     /// Count of all general purpose registers. 
-    gp_count: u32
-
-    /// Architecture signature 
-    signature: u32,
+    gp_count: u32,
 }
 
 /// Information about all architecture registers.
-pub struct ArchRegs {
-    pub fn init(&self, arch: ArchVariants, sub_arch: ArchSubType) {
+impl ArchInfo {
+    const fn construct_from_host() -> Self {
+        let arch: ArchVariants;
+
+        #[cfg(target_arch="x86")] {
+            arch = ArchVariants::X86;   
+        }
+
+        #[cfg(target_arch="x86_64")] {
+            arch = ArchVariants::X64;   
+        }
         
+        #[cfg(target_arch="arm")] {
+            arch = ArchVariants::A32;
+        }
+        
+        #[cfg(target_arch="aarch64")] {
+            arch = ArchVariants::A64;
+        }
+
+        let arch_info: ArchInfo = unsafe { mem::MaybeUninit::uninit().assume_init() };
+        //FIX: add detect sub arch type
+        arch_info.init(ArchVariants::UNKNOWN, ArchSubType::NONE)
     }
 
-    pub fn reset(&self) {
-        self.signature = 0
+    pub fn init(self, arch: ArchVariants, sub_arch: ArchSubType) -> Self {
+        match arch {
+            ArchVariants::X86 => {
+                self.gp_size = 4;
+                self.gp_count = 8;
+            },
+            ArchVariants::X64 => {
+                self.gp_size = 8;
+                self.gp_count = 16;
+            },
+            ArchVariants::A32 => {
+                self.gp_size = 4;
+                self.gp_count = 16;
+            },
+            ArchVariants::A32 => {
+                self.gp_size = 8;
+                self.gp_count = 32;
+            },
+            ArchVariants::UNKNOWN => {
+                self.gp_size = 0;
+                self.gp_count = 0;
+            }
+        }
+
+        self.sub_arch = sub_arch;
+        self
+    }
+
+    pub fn reset(self) -> Self {
+        self.init(ArchVariants::UNKNOWN, ArchSubType::NONE)
     }
 
     /// Returns the architecture id, see `Id`.
@@ -89,32 +134,39 @@ pub struct ArchRegs {
     }
 
     /// Returns the native size of a general-purpose register.
-    pub fn gp_size() -> u32 {
+    pub fn gp_size(&self) -> u32 {
         self.gp_size
     }
 
     /// Returns number of general-purpose registers.
-    pub fn gp_count() -> u32 {
+    pub fn gp_count(&self) -> u32 {
         self.gp_count
     }
 }
 
-impl GpSize {
+impl ArchInfo {
     /// Tests whether this architecture is 32-bit.
     pub fn is_32bit(&self) -> bool {
-        self == 4
+        self.gp_size == 4
     }
     /// Tests whether this architecture is 64-bit.
     pub fn is_64bit(&self) -> bool {
-        self == 8
+        self.gp_size == 8
     }
 }
 
 /// Information about all architecture registers.
 pub struct ArchRegs {
     /// Register information and signatures indexed by `BaseReg::RegType`.
-    reg_info: [RegInfo; 32]
+    reg_info: [RegInfo; 32],
     /// Count (maximum) of  registers per `BaseReg::RegType`.
     reg_count: [u8; 32],
     /// Converts RegType to TypeId, see `Type::Id`.
+    uint8_t regTypeToTypeId[BaseReg::kTypeMax + 1];
 }
+
+// CPP: changes 
+// 1) signature from ArchInfo removed
+// 2) isX86Family and isArmFamily moved to ArchVariants
+// 3) is32Bit and is64Bit separated from main trait 
+// 4) Creation ArchRegs for host target implemented like const function.
