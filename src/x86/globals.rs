@@ -1,4 +1,5 @@
-enum Id {
+/// Instruction id.
+enum Instruction {
     Aaa,                              // Instruction 'aaa' (X86).
     Aad,                              // Instruction 'aad' (X86).
     Aam,                              // Instruction 'aam' (X86).
@@ -1503,3 +1504,36 @@ enum Id {
     Xsetbv,                           // Instruction 'xsetbv' {XSAVE}.
     Xtest,                            // Instruction 'xtest' {TSX}.
 }
+
+/// Instruction options.
+enum Options {
+    Vex3           = 0x00000400u, // Use 3-byte VEX prefix if possible (AVX) (must be 0x00000400).
+    ModMR          = 0x00000800u, // Use ModMR instead of ModRM when it's available.
+    Evex           = 0x00001000u, // Use 4-byte EVEX prefix if possible (AVX-512) (must be 0x00001000).
+
+    Lock           = 0x00002000u, // LOCK prefix (lock-enabled instructions only).
+    Rep            = 0x00004000u, // REP prefix (string instructions only).
+    Repne          = 0x00008000u, // REPNE prefix (string instructions only).
+
+    XAcquire       = 0x00010000u, // XACQUIRE prefix (only allowed instructions).
+    XRelease       = 0x00020000u, // XRELEASE prefix (only allowed instructions).
+
+    ER             = 0x00040000u, // AVX-512: embedded-rounding {er} and implicit {sae}.
+    SAE            = 0x00080000u, // AVX-512: suppress-all-exceptions {sae}.
+    RN_SAE         = 0x00000000u, // AVX-512: round-to-nearest (even)      {rn-sae} (bits 00).
+    RD_SAE         = 0x00200000u, // AVX-512: round-down (toward -inf)     {rd-sae} (bits 01).
+    RU_SAE         = 0x00400000u, // AVX-512: round-up (toward +inf)       {ru-sae} (bits 10).
+    RZ_SAE         = 0x00600000u, // AVX-512: round-toward-zero (truncate) {rz-sae} (bits 11).
+    ZMask          = 0x00800000u, // AVX-512: Use zeroing {k}{z} instead of merging {k}.
+    Avx512Mask     = 0x00FC0000u,  // AVX-512: Mask of all possible AVX-512 options except EVEX prefix flag.
+
+    OpCodeB        = 0x01000000u, // REX.B and/or VEX.B field (X64).
+    OpCodeX        = 0x02000000u, // REX.X and/or VEX.X field (X64).
+    OpCodeR        = 0x04000000u, // REX.R and/or VEX.R field (X64).
+    OpCodeW        = 0x08000000u, // REX.W and/or VEX.W field (X64).
+    Rex            = 0x40000000u, // Force REX prefix (X64).
+    InvalidRex     = 0x80000000u   // Invalid REX prefix (set by X86 or when AH|BH|CH|DH regs are used on X64).
+}
+
+// CPP: changes 
+// 1) unimplemented isDefinedId
