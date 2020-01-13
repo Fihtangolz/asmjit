@@ -1,6 +1,5 @@
 /// Register type.
 pub enum RegType {
-    None,  // No register type or invalid register.
     GpbLo, // Low GPB register (AL, BL, CL, DL, ...).
     GpbHi, // High GPB register (AH, BH, CH, DH only).
     Gpw,   // GPW register.
@@ -34,3 +33,7 @@ pub enum RegGroup {
     Bnd,         // Bound register group.
     Rip,         // Instrucion pointer (IP).
 }
+
+// CPP: changes 
+// 1) Remove None from RegType
+//  
