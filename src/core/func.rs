@@ -64,17 +64,17 @@ struct FuncSignature {
     /// Return value TypeId.
     ret: r#type::Type,
     /// Function arguments TypeIds.
-    args: u8,
+    args: r#type::Type,
 
-    enum : uint8_t {
-        //! Doesn't have variable number of arguments (`...`).
-        kNoVarArgs = 0xFF
-    };
+    // enum : uint8_t {
+    //     //! Doesn't have variable number of arguments (`...`).
+    //     kNoVarArgs = 0xFF
+    // };
 }
 
 impl FuncSignature {
     /// Initializes the function signature.
-    pub fn init(&mut self, call_conv: CallConvVariants, va_index: u8, ret: r#type::Type, args: u8, arg_count: u8) {
+    pub fn init(&mut self, call_conv: CallConvVariants, va_index: u8, ret: r#type::Type, args: r#type::Type, arg_count: u8) {
         self.call_conv = call_conv;
         self.arg_count = arg_count;
         self.va_index = va_index;
@@ -87,46 +87,50 @@ impl FuncSignature {
     }
 
     /// Returns the calling convention.
-    pub fn call_conv(&self) -> CallConvVariants { 
-        self.call_сonv
+    pub fn call_conv(&self) -> &CallConvVariants { 
+        &self.call_conv
     }
     /// Sets the calling convention to `ccId`;
-    pub fn set_call_conv(&mut self, call_сonv: CallConvVariants { 
-        self.call_сonv = call_сonv;
+    pub fn set_call_conv(&mut self, call_conv: CallConvVariants) { 
+        self.call_conv = call_conv
     }
     /// Tests whether the function has variable number of arguments (...).
-    pub fn has_var_args() -> bool { 
-        return _vaIndex != kNoVarArgs; 
+    pub fn has_var_args(&self) -> bool { 
+        unimplemented!();
     }
     /// Returns the variable arguments (...) index, `kNoVarArgs` if none.
-    inline uint32_t va_index() const noexcept { 
-      return _vaIndex; 
+    pub fn va_index(&self) -> u8 { 
+        self.va_index
     }
     /// Sets the variable arguments (...) index to `index`.
-    inline void set_va_index(uint32_t index) noexcept { 
-        _vaIndex = uint8_t(index); 
+    pub fn set_va_index(&mut self, index: u8) { 
+        self.va_index = index
     }
     /// Resets the variable arguments index (making it a non-va function).
-    inline void reset_va_index() noexcept { 
-      _vaIndex = kNoVarArgs; 
+    pub fn reset_va_index(&self) { 
+        unimplemented!();
     }
 
     /// Returns the number of function arguments.
-    pub fn arg_count() -> u8 { 
+    pub fn arg_count(&self) -> u8 { 
         self.arg_count
     }
-
+    
     pub fn has_ret(&self) -> bool { 
-      return _ret != Type::kIdVoid; 
+        self.ret != r#type::Type::Void
     }
+    
     /// Returns the return value type.
-    inline uint32_t ret() const noexcept { 
-      return _ret; 
+    pub fn ret(&self) -> &r#type::Type { 
+        &self.ret
     }
 
     /// Returns the type of the argument at index `i`.
-    inline uint32_t arg(uint32_t i) const noexcept {
-        ASMJIT_ASSERT(i < _argCount);
-        return _args[i];
+    pub fn arg(&self, index: u8) -> &r#type::Type {
+        if index > self.arg_count {
+            panic!("out of range");            
+        }
+    
+        &self.args
     }
 }
