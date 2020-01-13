@@ -55,7 +55,7 @@ pub struct ArchInfo {
 
 /// Information about all architecture registers.
 impl ArchInfo {
-    const fn construct_from_host() -> Self {
+    fn construct_from_host() -> Self {
         let arch: ArchVariants;
 
         #[cfg(target_arch="x86")] {
@@ -79,7 +79,7 @@ impl ArchInfo {
         arch_info.init(ArchVariants::UNKNOWN, ArchSubType::NONE)
     }
 
-    pub fn init(self, arch: ArchVariants, sub_arch: ArchSubType) -> Self {
+    pub fn init(mut self, arch: ArchVariants, sub_arch: ArchSubType) -> Self {
         match arch {
             ArchVariants::X86 => {
                 self.gp_size = 4;
@@ -93,7 +93,7 @@ impl ArchInfo {
                 self.gp_size = 4;
                 self.gp_count = 16;
             },
-            ArchVariants::A32 => {
+            ArchVariants::A64 => {
                 self.gp_size = 8;
                 self.gp_count = 32;
             },
@@ -112,8 +112,8 @@ impl ArchInfo {
     }
 
     /// Returns the architecture id, see `Id`.
-    pub fn arch_id(&self) -> ArchVariants {
-        self.arch
+    pub fn arch_id(&self) -> &ArchVariants {
+        &self.arch
     }
 
     /// Returns the architecture sub-id, see `SubType`.
@@ -130,8 +130,8 @@ impl ArchInfo {
     /// Architecture mode means the instruction encoding to be used when generating
     /// machine code, thus mode can be used to force generation of THUMB and THUMBv2
     /// encoding or regular ARM encoding.
-    pub fn arch_sub_id(&self) -> ArchSubType {
-        self.sub_arch
+    pub fn arch_sub_id(&self) -> &ArchSubType {
+        &self.sub_arch
     }
 
     /// Returns the native size of a general-purpose register.
