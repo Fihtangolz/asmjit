@@ -14,22 +14,19 @@ pub struct BaseReg {
 ///
 /// This information is compatible with operand's signature (32-bit integer)
 /// and `RegInfo` just provides easy way to access it.
-pub struct RegInfo {
-    v: u32 
-}
-
-impl RegInfo {
-    fn reset(&mut self) {
-        self.v = 0;
-    }
-
-    fn set_signature(&mut self, signature: u32) {
-        self.v = signature;
-    }
-
-    fn size() {
-        
-    }
+trait RegInfo {
+    fn operand_type();
+    fn group();
+    fn type();
+    fn size();
 }
 
 // CPP: changes 
+// 1) Remove from RegInfo:
+//  - signature 
+//  - isValid,
+//  - _getSignaturePart 
+//  - setSignature
+//  - reset
+// Raname opType to operand_type
+// Make it trait 
