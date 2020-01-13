@@ -2,8 +2,6 @@ use std::mem;
 use super::operand::RegInfo;
 
 pub enum ArchVariants {
-    /// Unknown architecture
-    UNKNOWN,
     /// X86 architectures.
     /// X86 architecture (32-bit).
     X86,                        
@@ -55,28 +53,30 @@ pub struct ArchInfo {
 
 /// Information about all architecture registers.
 impl ArchInfo {
-    fn construct_from_host() -> Self {
-        let arch: ArchVariants;
+    fn from_host() -> Option<Self> {
+        let arch: Option<ArchVariants>;
 
         #[cfg(target_arch="x86")] {
-            arch = ArchVariants::X86;   
+            arch = Some(ArchVariants::X86);   
         }
 
         #[cfg(target_arch="x86_64")] {
-            arch = ArchVariants::X64;   
+            arch = Some(ArchVariants::X64);   
         }
         
         #[cfg(target_arch="arm")] {
-            arch = ArchVariants::A32;
+            arch = Some(ArchVariants::A32);
         }
         
         #[cfg(target_arch="aarch64")] {
-            arch = ArchVariants::A64;
+            arch = Some(ArchVariants::A64);
         }
 
-        let arch_info: ArchInfo = unsafe { mem::MaybeUninit::uninit().assume_init() };
-        //FIX: add detect sub arch type
-        arch_info.init(ArchVariants::UNKNOWN, ArchSubType::NONE)
+        arch.map(|x| {
+            let arch_info: ArchInfo = unsafe { mem::MaybeUninit::uninit().assume_init() };
+            //FIX: add detect sub arch type
+            arch_info.init(x, ArchSubType::NONE)
+        })
     }
 
     pub fn init(mut self, arch: ArchVariants, sub_arch: ArchSubType) -> Self {
