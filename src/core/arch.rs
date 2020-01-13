@@ -73,42 +73,40 @@ impl ArchInfo {
         }
 
         arch.map(|x| {
-            let arch_info: ArchInfo = unsafe { mem::MaybeUninit::uninit().assume_init() };
             //FIX: add detect sub arch type
-            arch_info.init(x, ArchSubType::NONE)
+            Self::new(x, ArchSubType::NONE)
         })
     }
 
-    pub fn init(mut self, arch: ArchVariants, sub_arch: ArchSubType) -> Self {
+    pub fn new(arch: ArchVariants, sub_arch: ArchSubType) -> Self {
+        let gp_size: u32; 
+        let gp_count: u32;
+
         match arch {
             ArchVariants::X86 => {
-                self.gp_size = 4;
-                self.gp_count = 8;
+                gp_size = 4;
+                gp_count = 8;
             },
             ArchVariants::X64 => {
-                self.gp_size = 8;
-                self.gp_count = 16;
+                gp_size = 8;
+                gp_count = 16;
             },
             ArchVariants::A32 => {
-                self.gp_size = 4;
-                self.gp_count = 16;
+                gp_size = 4;
+                gp_count = 16;
             },
             ArchVariants::A64 => {
-                self.gp_size = 8;
-                self.gp_count = 32;
+                gp_size = 8;
+                gp_count = 32;
             },
-            ArchVariants::UNKNOWN => {
-                self.gp_size = 0;
-                self.gp_count = 0;
-            }
         }
 
-        self.sub_arch = sub_arch;
-        self
-    }
-
-    pub fn reset(self) -> Self {
-        self.init(ArchVariants::UNKNOWN, ArchSubType::NONE)
+        Self {
+            arch: arch,
+            sub_arch: sub_arch,
+            gp_size: gp_size,
+            gp_count: gp_count,
+        }
     }
 
     /// Returns the architecture id, see `Id`.
@@ -174,4 +172,6 @@ pub fn type_id_to_reg_info() {
 // 1) signature from ArchInfo removed
 // 2) isX86Family and isArmFamily moved to ArchVariants
 // 3) is32Bit and is64Bit separated from main trait 
-// 4) Creation ArchRegs for host target implemented like const function.
+// 4) Creation ArchRegs for host target implemented like function into ArchInfo impl
+// 5) Reset was removed
+// 6) init rename into new 
