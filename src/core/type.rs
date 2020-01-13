@@ -5,6 +5,7 @@
 //! register representation (the group of data stored in the register and the
 //! width used) and it's also used by APIs that allow to describe and work with
 //! function signatures.
+#[derive(PartialEq)]
 pub enum Type {
     Void,
   
