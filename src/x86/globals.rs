@@ -1505,6 +1505,7 @@ enum Instruction {
     Xtest,                            // Instruction 'xtest' {TSX}.
 }
 
+/*
 /// Instruction options.
 enum Options {
     Vex3           = 0x00000400u, // Use 3-byte VEX prefix if possible (AVX) (must be 0x00000400).
@@ -1520,10 +1521,10 @@ enum Options {
 
     ER             = 0x00040000u, // AVX-512: embedded-rounding {er} and implicit {sae}.
     SAE            = 0x00080000u, // AVX-512: suppress-all-exceptions {sae}.
-    RN_SAE         = 0x00000000u, // AVX-512: round-to-nearest (even)      {rn-sae} (bits 00).
-    RD_SAE         = 0x00200000u, // AVX-512: round-down (toward -inf)     {rd-sae} (bits 01).
-    RU_SAE         = 0x00400000u, // AVX-512: round-up (toward +inf)       {ru-sae} (bits 10).
-    RZ_SAE         = 0x00600000u, // AVX-512: round-toward-zero (truncate) {rz-sae} (bits 11).
+    RnSae          = 0x00000000u, // AVX-512: round-to-nearest (even)      {rn-sae} (bits 00).
+    RdSae          = 0x00200000u, // AVX-512: round-down (toward -inf)     {rd-sae} (bits 01).
+    RuSae          = 0x00400000u, // AVX-512: round-up (toward +inf)       {ru-sae} (bits 10).
+    RzSae          = 0x00600000u, // AVX-512: round-toward-zero (truncate) {rz-sae} (bits 11).
     ZMask          = 0x00800000u, // AVX-512: Use zeroing {k}{z} instead of merging {k}.
     Avx512Mask     = 0x00FC0000u,  // AVX-512: Mask of all possible AVX-512 options except EVEX prefix flag.
 
@@ -1534,6 +1535,7 @@ enum Options {
     Rex            = 0x40000000u, // Force REX prefix (X64).
     InvalidRex     = 0x80000000u   // Invalid REX prefix (set by X86 or when AH|BH|CH|DH regs are used on X64).
 }
+*/
 
 // CPP: changes 
 // 1) unimplemented isDefinedId
