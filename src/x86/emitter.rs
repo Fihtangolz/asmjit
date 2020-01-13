@@ -7,6 +7,7 @@ macro_rules! define_inst {
 }
 
 trait EmitterExplicitT {
+    /*
     type Error;
     // Native Registers
     //
@@ -207,4 +208,5 @@ trait EmitterExplicitT {
     define_inst!(vpcmpistri, Vpcmpistri, Xmm, Mem, Imm);                // AVX  [IMPLICIT]
     define_inst!(vpcmpistrm, Vpcmpistrm, Xmm, Xmm, Imm);                // AVX  [IMPLICIT]
     define_inst!(vpcmpistrm, Vpcmpistrm, Xmm, Mem, Imm);                // AVX  [IMPLICIT]
+    */
 }
