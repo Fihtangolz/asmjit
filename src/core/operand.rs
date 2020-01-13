@@ -1,3 +1,6 @@
+//! Count of register groups used by virtual registers.
+pub const K_GROUP_VIRT: usize = 4;
+
 pub struct Operand {
 
 }
