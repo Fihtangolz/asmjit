@@ -1,5 +1,6 @@
-mod arch;
+pub mod arch;
 mod operand;
 mod func;
-mod callconv;
+pub mod callconv;
 mod r#type;
+pub mod globals;

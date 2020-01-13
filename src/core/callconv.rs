@@ -1,5 +1,10 @@
 use super::arch::ArchVariants;
 use super::operand::K_GROUP_VIRT;
+use super::globals::{
+    AsmJitError,
+    Error
+};
+use crate::x86;
 
 pub enum CallConvVariants {
     /// `__cdecl` calling convention (used by C runtime and libraries).
@@ -78,6 +83,9 @@ pub enum Strategy {
     Win64,              // WIN64 specific register assignment strategy.
 }
 
+/// Internal limits of AsmJit's CallConv.
+const kMaxRegArgsPerGroup: usize = 16;
+
 /// Function calling convention.
 ///
 /// Function calling convention is a scheme that defines how function parameters
@@ -101,13 +109,16 @@ pub struct CallConv {
     /// Natural stack alignment as defined by OS/ABI.
     natural_stack_alignment: u8,
 
-    /// Mask of all passed registers, per group.
-    passed_regs: [u32; K_GROUP_VIRT],
-    /// Mask of all preserved registers, per group.
-    preserved_regs: [u32; K_GROUP_VIRT],
+    reg_group: [RegGroup; K_GROUP_VIRT],
+}
 
+struct RegGroup {
+    /// Mask of all passed registers, per group.
+    passed: u32,
+    /// Mask of all preserved registers, per group.
+    preserved: u32,
     /// Passed registers' order, per group.
-    passed_order: [u32; K_GROUP_VIRT],
+    order: [u8; kMaxRegArgsPerGroup],
 }
 
 /// Calling convention flags.
@@ -126,6 +137,20 @@ bitflags! {
 
 
 impl CallConv {
+    pub fn init(&mut self, cv: CallConvVariants) {
+        if cv.is_x86_family() {
+            x86::callconv::init(self, cv);
+        }
+
+        if cv.is_arm_family() {
+            panic!("arm unimplemented");
+        }
+    }
+
+    pub fn reset() {
+        unimplemented!();
+    }
+
     // Returns the calling convention id, see `Id`.
     pub fn call_conv(&self) -> &CallConvVariants {
         &self.call_conv
@@ -162,8 +187,8 @@ impl CallConv {
         self.flags 
     }
     // Adds the calling convention flags, see `Flags`.
-    pub fn set_flags(&mut self) { 
-        unimplemented!(); 
+    pub fn set_flags(&mut self, flags: Flags) { 
+        self.flags.insert(flags)
     }
     // Adds the calling convention flags, see `Flags`.
     pub fn add_flags(&mut self) { 
@@ -226,15 +251,15 @@ impl CallConv {
         unimplemented!();
     }
 
-    pub fn set_passed_order() {
+    pub fn set_passed_order(&mut self, index: u32, a0: u32, a1: u32, a2: u32, a3: u32, a4: u32, a5: u32, a6: u32, a7: u32) {
         unimplemented!();
     }
 
-    pub fn preserved_regs() -> u32 {
-        unimplemented!();
+    pub fn preserved_regs(&self, index: usize) -> u32 {
+        self.reg_group[index].preserved
     }
     
-    pub fn set_preserved_regs() {
-        unimplemented!();
+    pub fn set_preserved_regs(&mut self, index: usize, regs: u32) {
+        self.reg_group[index].preserved = regs
     }
 }
