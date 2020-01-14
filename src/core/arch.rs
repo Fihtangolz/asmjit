@@ -155,18 +155,20 @@ impl ArchInfo {
 }
 
 /// Information about all architecture registers.
-pub struct ArchRegs {
+pub struct ArchRegs<RI: RegInfo> {
     /// Register information and signatures indexed by `BaseReg::RegType`.
-    reg_info: [RegInfo; 32],
+    reg_info: [RI; 32],
     /// Count (maximum) of  registers per `BaseReg::RegType`.
     reg_count: [u8; 32],
     // Converts RegType to TypeId, see `Type::Id`.
-    // uint8_t regTypeToTypeId[BaseReg::kTypeMax + 1];
+    reg_type_to_type_id: [u8; 32],
 }
 
-pub fn type_id_to_reg_info() {
-    
-}
+// pub fn type_id_to_reg_info(arch: ArchVariants, type_id_in_out: u32, reg_info: RegInfo) {
+//     if arch.is_x86_family() {
+        
+//     }
+// }
 
 // CPP: changes 
 // 1) signature from ArchInfo removed

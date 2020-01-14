@@ -46,7 +46,7 @@ pub struct BaseReg {
 ///
 /// This information is compatible with operand's signature (32-bit integer)
 /// and `RegInfo` just provides easy way to access it.
-trait RegInfo {
+pub trait RegInfo {
     fn operand_type();
     fn group();
     fn r#type();
