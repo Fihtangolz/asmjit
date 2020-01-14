@@ -163,7 +163,7 @@ pub enum Error {
     InvalidRexPrefix,
 
     /// Invalid {...} register.
-    #[error("Invalid {...} register ")]
+    #[error("Invalid {{...}} register ")]
     InvalidExtraReg,
 
     /// Invalid {k} use (not supported by the instruction).
@@ -285,13 +285,13 @@ mod globals {
     use std::mem;
 
     /// Host memory allocator overhead.
-    pub const kAllocOverhead: usize = mem::size_of::<isize>() * 4;
+    pub const AllocOverhead: usize = mem::size_of::<isize>() * 4;
 
     /// Host memory allocator alignment.
-    pub const kAllocAlignment: u32 = 8;
+    pub const AllocAlignment: u32 = 8;
 
     /// Aggressive growing strategy threshold.
-    pub const kGrowThreshold: u32 = 1024 * 1024 * 16;
+    pub const GrowThreshold: u32 = 1024 * 1024 * 16;
 
     /// Maximum height of RB-Tree is:
     ///
@@ -306,36 +306,35 @@ mod globals {
     /// The final value was adjusted by +1 for safety reasons.
     // TODO: const xMaxTreeHeight: usize = (ASMJIT_ARCH_BITS == 32 ? 30 : 61) + 1;
 
-
     /// Maximum number of operands per a single instruction.
-    pub const kMaxOpCount: u32 = 6;
+    pub const MaxOpCount: u32 = 6;
 
     // TODO: Use this one.
-    pub const kMaxFuncArgs: u32 = 16;
+    pub const MaxFuncArgs: u32 = 16;
 
     /// Maximum number of physical registers AsmJit can use per register group.
-    pub const kMaxPhysRegs: u32 = 32;
+    pub const MaxPhysRegs: u32 = 32;
 
     /// Maximum alignment.
-    pub const kMaxAlignment: u32 = 64;
+    pub const MaxAlignment: u32 = 64;
 
     /// Maximum label or symbol size in bytes.
-    pub const kMaxLabelNameSize: u32 = 2048;
+    pub const MaxLabelNameSize: u32 = 2048;
 
     /// Maximum section name size.
-    pub const kMaxSectionNameSize: u32 = 35;
+    pub const MaxSectionNameSize: u32 = 35;
 
     /// Maximum size of comment.
-    pub const kMaxCommentSize: u32 = 1024;
+    pub const MaxCommentSize: u32 = 1024;
 
     /// Invalid identifier.
-    pub const kInvalidId: u32 = 0xFFFFFFFF;
+    pub const InvalidId: u32 = 0xFFFFFFFF;
 
     /// Returned by `indexOf()` and similar when working with containers that use 32-bit index/size.
-    pub const kNotFound: u32 = 0xFFFFFFFF;
+    pub const NotFound: u32 = 0xFFFFFFFF;
 
     /// Invalid base address.
-    pub const kNoBaseAddress: u64 = (~0);
+    pub const NoBaseAddress: u64 = !0;
 
     // ============================================================================
     // [asmjit::Globals::ResetPolicy]
@@ -345,25 +344,25 @@ mod globals {
     #[repr(u32)]
     pub enum ResetPolicy {
         /// Soft reset, doesn't deallocate memory (default).
-        kResetSoft = 0,
+        ResetSoft = 0,
         /// Hard reset, releases all memory used, if any.
-        kResetHard = 1
+        ResetHard = 1,
     }
 
     // ============================================================================
     // [asmjit::Globals::Link]
     // ============================================================================
 
-    pub const kLinkLeft: u32  = 0;
-    pub const kLinkRight: u32 = 1;
+    pub const LinkLeft: u32 = 0;
+    pub const LinkRight: u32 = 1;
 
-    pub const kLinkPrev: u32  = 0;
-    pub const kLinkNext: u32  = 1;
+    pub const LinkPrev: u32 = 0;
+    pub const LinkNext: u32 = 1;
 
-    pub const kLinkFirst: u32 = 0;
-    pub const kLinkLast: u32  = 1;
+    pub const LinkFirst: u32 = 0;
+    pub const LinkLast: u32 = 1;
 
-    pub const kLinkCount: u32 = 2;
+    pub const LinkCount: u32 = 2;
 
     // ============================================================================
     // [asmjit::ByteOrder]
@@ -371,8 +370,8 @@ mod globals {
 
     #[repr(u32)]
     pub enum ByteOrder {
-        kLE = 0,
-        kBE = 1,
+        Le = 0,
+        Be = 1,
         // TODO: kNative = ASMJIT_ARCH_LE ? kLE : kBE,
         // TODO: ASMJIT_ARCH_LE ? kBE : kLE,
     }
