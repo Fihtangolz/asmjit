@@ -12,3 +12,4 @@ bitflags = "1.2.1"
 libc = "0.2.66"
 [target.'cfg(windows)'.dependencies]
 winapi = { version = "0.3.8", features = ["winnt"]}
+scopeguard = "1.0.0"
