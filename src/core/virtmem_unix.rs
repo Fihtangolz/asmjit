@@ -9,6 +9,11 @@ use super::globals::{
 use super::virtmem::*;
 use libc;
 
+const dualMappingFilter: [Flags; 2] = [
+    Flags::AccessWrite,
+    Flags::AccessExecute,
+];
+
 pub fn release_dual_mapping(dm: DualMapping, size: usize) -> Option<Error> {
     let mut err = release(dm.ro, size);
     if dm.ro != dm.rw {
@@ -33,17 +38,21 @@ pub fn alloc_dual_mapping(size: usize, flags: Flags) -> Result<DualMapping, Erro
     }
 
     //TODO: VirtMem_openAnonymousMemory
-
+    let mut fd: libc::c_int; 
+    defer!{{
+        
+    }};
+    
     let mut ptr: [*mut libc::c_void; 2];
     for i in 0..2 {
-        ptr[i] = libc::mmap(ptr::null(), size, , libc::MAP_SHARED, , 0);
+        ptr[i] = libc::mmap(ptr::null(), size, , libc::MAP_SHARED, fd, 0);
         if ptr[i] == libc::MAP_FAILED {
-            let e1 = libc::errno;
+            let e1 = libc::__errno_location();
             if i == 1 {
                 libc::munmap(ptr[0], size);
-                let e2 = libc::errno;
+                let e2 = libc::__errno_location();
             }
-            return;
+            //TODO
         }
     }
 
@@ -102,3 +111,33 @@ pub fn alloc(size: usize, flags: Flags) -> Result<*mut u8, Error> {
     Ok(ptr as *mut u8)
 }
 
+
+
+//VirtMem_openAnonymousMemory
+fn open_anonymous_memory() -> Option<Error> {
+    let mut fd: libc::c_int;
+
+    #[cfg(target_os = "freebsd")] {
+        static mut vm_memfd_create_not_supported: bool = false;
+        if !vm_memfd_create_not_supported {
+            let fd = libc::syscall(libc::SYS_memfd_create, "vmem", 0);
+
+            let e = libc::__errno_location();
+            if e == libc::ENOSYS {
+                vm_memfd_create_not_supported = true; 
+            } else {
+                None
+            }
+        }
+    }
+
+    #[cfg(target_os = "freebsd")] {
+        let fd = libc::shm_open(libc::SHM_ANON, libc::O_RDWR | libc::O_CREAT | libc::O_EXCL, libc::S_IRUSR | libc::S_IWUSR);
+        if ret >= 0 {
+            
+        }
+    }
+
+    
+    None
+}
