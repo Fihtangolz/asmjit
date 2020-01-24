@@ -1,3 +1,17 @@
+use std::ptr::NonNull;
+use std::sync::Mutex;
+
+#[cfg(target_family = "windows")]
+mod win;
+#[cfg(target_family = "windows")]
+use win::*;
+
+#[cfg(target_family = "unix")] 
+mod unix;
+#[cfg(target_family = "unix")] 
+use unix::*;
+
+
 // Virtual memory and memory mapping flags.
 bitflags! {
     pub struct Flags: u32 {
@@ -29,18 +43,24 @@ pub struct Info {
     pub page_granularity: u32,
 }
 
-pub fn info() -> Info {
-    unimplemented!();
+pub fn info() -> &'static Info {
+    static mut info: Mutex<Option<Info>> = Mutex::new(None);
+
+    let owned = info.lock().unwrap();
+    if owned.is_none() {
+        owned = Some(get_info());
+    }
+    &owned.unwrap()
 }
 
 pub struct DualMapping {
-    ro: *mut u8,
-    rw: *mut u8,
+    pub ro: *mut u8,
+    pub rw: *mut u8,
 }
+
 pub enum ShmStrategy {
     Unknown,
     DevShm,
     TmpDir,
 }
 
-use super::virtmem_unix;
