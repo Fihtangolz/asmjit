@@ -169,7 +169,7 @@ impl Statistics {
 // - Internally, the allocator also uses RB tree to keep track of all blocks
 //   across all pools. Each inserted block is added to the tree so it can be
 //   matched fast during `release()` and `shrink()`.
-struct JitAllocator {
+pub struct JitAllocator {
     // Allocator options, see \ref JitAllocator::Options.
     options: Options,
     // Base block size (0 if the allocator is not initialized).
