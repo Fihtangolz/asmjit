@@ -1,22 +1,25 @@
-use std::ptr::NonNull;
-use std::result::Result;
-use std::ptr;
-use std::mem::MaybeUninit;
-use std::cmp::max;
-
-use crate::core::globals::{
-    Error
-};
-
 use crate::core::virtmem::*;
+
+use std::{
+    ptr,
+    mem::MaybeUninit,
+    cmp::max,
+};
 use libc;
 
 const dualMappingFilter: [Flags; 2] = [
-    Flags::AccessWrite,
-    Flags::AccessExecute,
+    Flags::ACCESS_WRITE,
+    Flags::ACCESS_EXECUTE,
 ];
 
-pub fn get_info() -> Info { 
+pub enum ShmStrategy {
+    Unknown,
+    DevShm,
+    TmpDir,
+}
+
+#[inline(always)]
+pub fn info() -> Info { 
     let page_size = unsafe { libc::sysconf(libc::_SC_PAGESIZE) } as u32;
     Info {
         page_size: page_size,
@@ -24,6 +27,7 @@ pub fn get_info() -> Info {
     }
 }
 
+#[inline(always)]
 pub unsafe fn release_dual_mapping(dm: DualMapping, size: usize) -> Option<Error> {
     let mut err = release(dm.ro, size);
     //TODO: clarify can mmap provide equal pointers. It seems impossible
@@ -38,6 +42,7 @@ pub unsafe fn release_dual_mapping(dm: DualMapping, size: usize) -> Option<Error
     None
 }
 
+#[inline(always)]
 pub unsafe fn alloc_dual_mapping(size: usize, flags: Flags) -> Result<DualMapping, Error> {
     if size == 0 {
         return Err(Error::InvalidArgument);
@@ -45,7 +50,7 @@ pub unsafe fn alloc_dual_mapping(size: usize, flags: Flags) -> Result<DualMappin
     if (size as libc::off_t) < 0 {
         return Err(Error::TooLarge);
     }
-    if flags.contains(Flags::MappingPreferTmp) {
+    if flags.contains(Flags::MAPPING_PREFER_TMP) {
         //TODO: VirtMem_getShmStrategy
     }
 
@@ -80,19 +85,20 @@ pub unsafe fn alloc_dual_mapping(size: usize, flags: Flags) -> Result<DualMappin
 impl Into<i32> for Flags {
     fn into(self) -> i32 {
         let mut protection = 0;
-        if self.contains(Flags::AccessRead) {
+        if self.contains(Flags::ACCESS_READ) {
             protection = libc::PROT_READ;
         }
-        if self.contains(Flags::AccessWrite) {
+        if self.contains(Flags::ACCESS_WRITE) {
             protection = libc::PROT_READ | libc::PROT_WRITE;
         }
-        if self.contains(Flags::AccessExecute) {
+        if self.contains(Flags::ACCESS_EXECUTE) {
             protection = libc::PROT_READ | libc::PROT_EXEC;
         }
         protection
     }
 }
 
+#[inline(always)]
 pub unsafe fn protect(ptr: *mut u8, size: usize, flag: Flags) -> Option<Error> {
     let f = flag.into();
     let cp = ptr as *mut libc::c_void;
@@ -102,6 +108,7 @@ pub unsafe fn protect(ptr: *mut u8, size: usize, flag: Flags) -> Option<Error> {
     None
 }
 
+#[inline(always)]
 pub unsafe fn release(ptr: *mut u8, size: usize) -> Option<Error> {
     let cp = ptr as *mut libc::c_void;
     if libc::munmap(cp, size) != 0 {
@@ -111,6 +118,7 @@ pub unsafe fn release(ptr: *mut u8, size: usize) -> Option<Error> {
     None
 }
 
+#[inline(always)]
 pub unsafe fn alloc(size: usize, flags: Flags) -> Result<*mut u8, Error> {
     if size == 0 {
         return Err(Error::InvalidArgument);
