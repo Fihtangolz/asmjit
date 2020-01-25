@@ -1,9 +1,6 @@
 use super::arch::ArchVariants;
 use super::operand::K_GROUP_VIRT;
-use super::globals::{
-    AsmJitError,
-    Error
-};
+use super::globals::Error;
 use crate::x86;
 
 pub enum CallConvVariants {
@@ -121,8 +118,8 @@ struct RegGroup {
     order: [u8; kMaxRegArgsPerGroup],
 }
 
-/// Calling convention flags.
 bitflags! {
+    /// Calling convention flags.
     pub struct Flags: u32 {
         /// Callee is responsible for cleaning up the stack.
         const CALLEE_POPS_STACK = 0b00000001;   
