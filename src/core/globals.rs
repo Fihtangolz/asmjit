@@ -1,8 +1,5 @@
 use thiserror::Error;
 
-/// AsmJit error type
-pub type AsmJitError = Option<Error>;
-
 /// AsmJit errors.
 #[derive(Error, Debug)]
 pub enum Error {
@@ -316,25 +313,25 @@ mod globals {
     pub const MaxPhysRegs: u32 = 32;
 
     /// Maximum alignment.
-    pub const MaxAlignment: u32 = 64;
+    pub const MAX_ALIGNMENT: u32 = 64;
 
     /// Maximum label or symbol size in bytes.
-    pub const MaxLabelNameSize: u32 = 2048;
+    pub const MAX_LABEL_NAME_SIZE: u32 = 2048;
 
     /// Maximum section name size.
-    pub const MaxSectionNameSize: u32 = 35;
+    pub const MAX_SECTION_NAME_SIZE: u32 = 35;
 
     /// Maximum size of comment.
-    pub const MaxCommentSize: u32 = 1024;
+    pub const MAX_COMMENT_SIZE: u32 = 1024;
 
     /// Invalid identifier.
-    pub const InvalidId: u32 = 0xFFFFFFFF;
+    pub const INVALID_ID: u32 = 0xFFFFFFFF;
 
     /// Returned by `indexOf()` and similar when working with containers that use 32-bit index/size.
-    pub const NotFound: u32 = 0xFFFFFFFF;
+    pub const NOT_FOUND: u32 = 0xFFFFFFFF;
 
     /// Invalid base address.
-    pub const NoBaseAddress: u64 = !0;
+    pub const NO_BASE_ADDRESS: u64 = !0;
 
     // ============================================================================
     // [asmjit::Globals::ResetPolicy]
@@ -383,3 +380,4 @@ mod globals {
 // 3) Replace DebugUtils::errorAsString with thiserror
 // 4) Remove DebugUtils::debugOutput (we have log)
 // 5) Remove DebugUtils::assertionFailed (we have panic!)
+// 6) Remove asm-jit error type 
