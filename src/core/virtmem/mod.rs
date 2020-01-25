@@ -67,7 +67,7 @@ pub struct DualMapping {
     pub rw: *mut u8,
 }
 
-/// Returns [virtual memory information](Info).
+/// Returns virtual memory information.
 pub fn info() -> &'static Info {
     static mut INFO: Info = Info{page_size: 0, page_granularity: 0}; 
     static INIT: Once = Once::new();
