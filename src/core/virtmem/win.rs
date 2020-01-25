@@ -1,17 +1,21 @@
-use winapi::um::{
-    memoryapi as wm,
-    handleapi as wh,
-    winnt as wi,
-    errhandlingapi as we,
-    winbase as wb,
-    sysinfoapi as wif,
-};
-use winapi::shared::minwindef as wd;
-use std::ptr;
 use super::virtmem::*;
 
-pub fn get_info() -> Info {
-    let sys_info: wif:LPSYSTEM_INFO;
+use winapi::{
+    um::{
+        memoryapi as wm,
+        handleapi as wh,
+        winnt as wi,
+        errhandlingapi as we,
+        winbase as wb,
+        sysinfoapi as wif,
+    },
+    shared::minwindef as wd,
+};
+use std::ptr;
+
+#[inline(always)]
+pub fn info() -> Info {
+    let sys_info: wif::LPSYSTEM_INFO;
     wif::GetSystemInfo(sys_info);
 
     Info {
@@ -55,6 +59,7 @@ pub fn access_to_win_desired_access(flag: Flags) -> wd::DWORD {
     access
 }
 
+#[inline(always)]
 pub fn release(ptr: NonNull<u8>, size: usize) -> Option<Error> {
     if !wm::VirtualFree(ptr, 0, wi::MEM_RELEASE) {
         //TODO: VirtualFree failed
@@ -63,6 +68,7 @@ pub fn release(ptr: NonNull<u8>, size: usize) -> Option<Error> {
     None
 }
 
+#[inline(always)]
 pub fn protect(ptr: NonNull<u8>, size: usize, flag: Flags) -> Option<Error> {
     let old_flags: DWORD;
     if wm::VirtualProtect(ptr, size, flag.into(), &old_flags) == 0 {
@@ -72,6 +78,7 @@ pub fn protect(ptr: NonNull<u8>, size: usize, flag: Flags) -> Option<Error> {
     //TODO: VirtualProtect failed
 }
 
+#[inline(always)]
 pub unsafe fn alloc(size: usize, flag: Flags) -> Result<*mut u8, Error> {
     if size == 0 {
         panic!("size cannot be zero");
@@ -84,6 +91,7 @@ pub unsafe fn alloc(size: usize, flag: Flags) -> Result<*mut u8, Error> {
 
 }
 
+#[inline(always)]
 pub unsafe fn alloc_dual_mapping(size: usize, flags: Flags) -> Result<DualMapping, Error> {
     if size == 0 {
         panic!("size cannot be zero");
@@ -106,7 +114,7 @@ pub unsafe fn alloc_dual_mapping(size: usize, flags: Flags) -> Result<DualMappin
         ptr::null(),
     );
 
-    if fn == ptr::null() {
+    if fh == ptr::null() {
         //TODO: CreateFileMappingW failed
     }
 
@@ -123,12 +131,13 @@ pub unsafe fn alloc_dual_mapping(size: usize, flags: Flags) -> Result<DualMappin
     })
 }
 
+#[inline(always)]
 pub unsafe fn release_dual_mapping(dm: DualMapping, size: usize) -> Option<Error> {
-    wm::UnmapViewOfFile(dm->ro);
+    wm::UnmapViewOfFile(dm.ro);
      //TODO: clarify can MapViewOfFile provide equal pointers. It seems impossible
      //TODO: UnmapViewOfFile failed
     if dm.ro != dm.rw { 
-        wm::UnmapViewOfFile(dm->rw);
+        wm::UnmapViewOfFile(dm.rw);
     }
     //TODO: UnmapViewOfFile failed
 }
