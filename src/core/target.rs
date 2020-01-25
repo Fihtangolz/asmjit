@@ -1,4 +1,5 @@
 use super::arch::ArchInfo;
+use super::callconv::CallConvVariants;
 
 // Basic information about a code (or target). It describes its architecture,
 // code generation mode (or optimization level), and base address.
