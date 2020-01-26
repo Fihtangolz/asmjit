@@ -54,7 +54,7 @@ pub struct ArchInfo {
 /// Information about all architecture registers.
 impl ArchInfo {
     fn from_host() -> Option<Self> {
-        let arch: Option<ArchVariants> = None;
+        let mut arch: Option<ArchVariants> = None;
 
         #[cfg(target_arch="x86")] {
             arch = Some(ArchVariants::X86);   
@@ -170,10 +170,3 @@ pub struct ArchRegs<RI: RegInfo> {
 //     }
 // }
 
-// CPP: changes 
-// 1) signature from ArchInfo removed
-// 2) isX86Family and isArmFamily moved to ArchVariants
-// 3) is32Bit and is64Bit separated from main trait 
-// 4) Creation ArchRegs for host target implemented like function into ArchInfo impl
-// 5) Reset was removed
-// 6) init rename into new 
