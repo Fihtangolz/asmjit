@@ -21,7 +21,7 @@ pub struct CodeInfo {
 impl CodeInfo {
     pub fn new(
         arch_info: ArchInfo, 
-        stack_alignment: u8.
+        stack_alignment: u8,
         cdecl_call_conv: CallConvVariants,
         std_call_conv: CallConvVariants,
         fast_call_conv: CallConvVariants,
